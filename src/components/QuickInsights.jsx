@@ -1,20 +1,21 @@
+import { RESERVA_LIQUIDA, RESERVA_META } from '../data';
+
 export default function QuickInsights({ data, metrics, previousMetrics }) {
   const insights = [];
 
-  // Maior gasto
+  // Maior gasto (por categoria)
   const maiorGasto = data.despesas.reduce((max, d) => d.valor > max.valor ? d : max);
-  insights.push(`Maior gasto: ${maiorGasto.descricao} (R$ ${maiorGasto.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })})`);
+  insights.push(`Maior gasto: ${maiorGasto.categoria} (R$ ${maiorGasto.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })})`);
 
   // Comparação com mês anterior
   if (previousMetrics) {
     const diff = metrics.totalDespesas - previousMetrics.totalDespesas;
-    const diffPercent = ((diff / previousMetrics.totalDespesas) * 100).toFixed(1);
+    const diffPercent = previousMetrics.totalDespesas ? ((diff / previousMetrics.totalDespesas) * 100).toFixed(1) : '0.0';
     const direction = diff > 0 ? 'mais' : 'menos';
     insights.push(`Gastos: R$ ${Math.abs(diff).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} ${direction} que no mês anterior (${diffPercent}%)`);
   }
 
   // Cobertura reserva de emergência
-  const { RESERVA_LIQUIDA, RESERVA_META, SALARIO_MENSAL } = require('../data');
   const mesesCobertura = (RESERVA_LIQUIDA / metrics.totalDespesas).toFixed(1);
   const percentualMeta = ((RESERVA_LIQUIDA / RESERVA_META) * 100).toFixed(0);
   insights.push(`Reserva de emergência: ${mesesCobertura} meses de cobertura (${percentualMeta}% da meta)`);

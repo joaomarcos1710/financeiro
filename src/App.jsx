@@ -14,17 +14,17 @@ import CreditCards from './components/CreditCards';
 import RecentTransactions from './components/RecentTransactions';
 
 function App() {
-  const [month, setMonth] = useState('2026-07');
+  const monthsList = Object.keys(MONTHS_DATA).sort();
+  const [month, setMonth] = useState(monthsList[monthsList.length - 1]);
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('theme');
     return saved || 'light';
   });
 
   const currentMonthData = MONTHS_DATA[month];
-  const previousMonth = month === '2026-06' ? null : '2026-06';
+  const monthIndex = monthsList.indexOf(month);
+  const previousMonth = monthIndex > 0 ? monthsList[monthIndex - 1] : null;
   const previousMonthData = previousMonth ? MONTHS_DATA[previousMonth] : null;
-
-  const monthsList = Object.keys(MONTHS_DATA);
 
   const currentMetrics = useMemo(() => {
     if (!currentMonthData) return null;
@@ -40,8 +40,8 @@ function App() {
       saldo,
       economia,
       patrimonio: currentMonthData.patrimonio,
-      dividas: currentMonthData.dividas,
-      patrimonioLiquido: currentMonthData.patrimonio - currentMonthData.dividas
+      dividas: currentMonthData.dividas_total,
+      patrimonioLiquido: currentMonthData.patrimonio - currentMonthData.dividas_total
     };
   }, [currentMonthData]);
 
@@ -59,8 +59,8 @@ function App() {
       saldo,
       economia,
       patrimonio: previousMonthData.patrimonio,
-      dividas: previousMonthData.dividas,
-      patrimonioLiquido: previousMonthData.patrimonio - previousMonthData.dividas
+      dividas: previousMonthData.dividas_total,
+      patrimonioLiquido: previousMonthData.patrimonio - previousMonthData.dividas_total
     };
   }, [previousMonthData]);
 

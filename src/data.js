@@ -11,6 +11,12 @@ const junho2026 = {
     { categoria: 'Salário Caixa', valor: 7167.51 },
     { categoria: 'Família (Mãe)', valor: 2412.25 },
     { categoria: 'Outras receitas', valor: 865.32 },
+    { categoria: 'Receitas Variadas', valor: 417.61 },
+    { categoria: 'Cashback', valor: 148.01 },
+    { categoria: 'Rendimentos', valor: 74.98 },
+    { categoria: 'Salário Mariane', valor: 68.15 },
+    { categoria: 'Pai (presente)', valor: 2.00 },
+    { categoria: 'Dividendos + Royalties', valor: 0.45 },
   ],
   despesas: [
     { categoria: 'Financiamento e Empréstimos', valor: 6558.15 },
@@ -23,6 +29,13 @@ const junho2026 = {
     { categoria: 'Assinaturas e Serviços', valor: 1272.80 },
     { categoria: 'Casa', valor: 1217.79 },
     { categoria: 'Mariane', valor: 1095.78 },
+    { categoria: 'Investimentos (Dólar)', valor: 621.78 },
+    { categoria: 'Pets', valor: 620.34 },
+    { categoria: 'Mercado / Feira / Hortifruti', valor: 607.27 },
+    { categoria: 'GYMPASS (Sidney + Júlia)', valor: 399.98 },
+    { categoria: 'Lazer e Hobbies (Corrida)', valor: 261.02 },
+    { categoria: 'Despesas Pessoais', valor: 156.39 },
+    { categoria: 'Informática (Office 365)', valor: 69.69 },
   ],
   ativos: [
     { nome: 'Conta Corrente CAIXA', valor: 66.59 },
@@ -39,17 +52,16 @@ const junho2026 = {
   ]
 };
 
+function totalsFor(month) {
+  const totalAtivos = month.ativos.reduce((sum, a) => sum + a.valor, 0);
+  const totalDividas = month.dividas.reduce((sum, d) => sum + d.saldo, 0);
+  return { ...month, patrimonio: totalAtivos, dividas_total: totalDividas };
+}
+
+// Julho 2026 ainda não foi fechado no Obsidian (arquivo de fechamento
+// está com as tabelas vazias) — só entra aqui quando você preencher.
 export const MONTHS_DATA = {
-  '2026-06': junho2026,
-  '2026-07': {
-    label: 'Julho 2026',
-    totalReceitas: 11204.49,
-    totalDespesas: 26397.03,
-    receitas: junho2026.receitas,
-    despesas: junho2026.despesas,
-    ativos: junho2026.ativos,
-    dividas: junho2026.dividas
-  }
+  '2026-06': totalsFor(junho2026)
 };
 
 // Orçamento mensal (do seu arquivo)

@@ -1,38 +1,26 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 export default function DailySpendingChart({ data }) {
-  // Calculate daily spending
-  const dailyData = {};
-  let accumulated = 0;
-
-  data.despesas.forEach(d => {
-    if (!dailyData[d.dia]) {
-      dailyData[d.dia] = { dia: d.dia, diario: 0, acumulado: 0 };
-    }
-    dailyData[d.dia].diario += d.valor;
-  });
-
-  const chartData = Object.values(dailyData)
-    .sort((a, b) => a.dia - b.dia)
-    .map(d => {
-      accumulated += d.diario;
-      return { ...d, acumulado: accumulated };
-    });
+  // Ranking de gastos por categoria (fechamento mensal não traz lançamento por dia)
+  const chartData = [...data.despesas]
+    .sort((a, b) => b.valor - a.valor)
+    .map(d => ({ categoria: d.categoria, valor: d.valor }));
 
   return (
     <div className="card">
       <h3 style={{ fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted)', marginBottom: '16px' }}>
-        EVOLUÇÃO DE GASTOS
+        RANKING DE GASTOS POR CATEGORIA
       </h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={chartData}>
+      <ResponsiveContainer width="100%" height={Math.max(300, chartData.length * 36)}>
+        <BarChart data={chartData} layout="vertical" margin={{ left: 40 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-          <XAxis dataKey="dia" stroke="var(--muted)" style={{ fontSize: '12px' }} />
-          <YAxis stroke="var(--muted)" style={{ fontSize: '12px' }} />
-          <Tooltip contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '4px', color: 'var(--text)' }} />
-          <Legend wrapperStyle={{ color: 'var(--text)' }} />
-          <Bar dataKey="diario" fill="var(--amber)" name="Gasto Diário" />
-          <Bar dataKey="acumulado" fill="var(--red)" name="Acumulado" />
+          <XAxis type="number" stroke="var(--muted)" style={{ fontSize: '12px' }} />
+          <YAxis type="category" dataKey="categoria" stroke="var(--muted)" style={{ fontSize: '11px' }} width={180} />
+          <Tooltip
+            formatter={(value) => `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+            contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '4px', color: 'var(--text)' }}
+          />
+          <Bar dataKey="valor" fill="var(--red)" name="Gasto" />
         </BarChart>
       </ResponsiveContainer>
     </div>

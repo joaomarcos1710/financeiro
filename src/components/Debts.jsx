@@ -37,7 +37,7 @@ export default function Debts({ dividas, ativos }) {
                 </div>
                 {divida.parcelas > 0 && (
                   <div style={{ fontSize: '10px', color: 'var(--muted)' }}>
-                    {divida.parcelaAtual}/{divida.parcelas} parcelas
+                    {divida.parcelas} parcelas restantes
                   </div>
                 )}
               </div>
