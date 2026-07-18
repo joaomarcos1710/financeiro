@@ -20,7 +20,7 @@ export default function DailySpendingChart({ data }) {
             formatter={(value) => `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
             contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '4px', color: 'var(--text)' }}
           />
-          <Bar dataKey="valor" fill="var(--red)" name="Gasto" />
+          <Bar dataKey="valor" fill="var(--red)" name="Gasto" isAnimationActive={false} />
         </BarChart>
       </ResponsiveContainer>
     </div>

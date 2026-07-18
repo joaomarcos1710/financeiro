@@ -1,4 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=League+Gothic&family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap');
+/* Fontes da marca hospedadas no projeto (funcionam offline e na prévia) */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./assets/fonts/hanken-grotesk-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'League Gothic';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/league-gothic-latin.woff2') format('woff2');
+}
 
 :root {
   /* Light theme */
@@ -30,9 +45,10 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Tema escuro: segue o sistema por padrão, mas o toggle CLARO/ESCURO
+   (atributo data-theme no <html>) sempre vence */
 @media (prefers-color-scheme: dark) {
-  :root {
-    /* Dark theme */
+  :root:not([data-theme="light"]) {
     --bg: #0E0E0E;
     --surface: #161616;
     --surfaceAlt: #161616;
@@ -42,6 +58,17 @@
     --border: #2A2A28;
     --alert: #FF6B5A;
   }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0E0E0E;
+  --surface: #161616;
+  --surfaceAlt: #161616;
+  --headerBg: #0E0E0E;
+  --text: #FFFFFF;
+  --muted: #B3B3B0;
+  --border: #2A2A28;
+  --alert: #FF6B5A;
 }
 
 body {

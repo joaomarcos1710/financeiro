@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import './App.css';
 import { MONTHS_DATA, BUDGETS, ATIVOS, TOTAL_ATIVOS, DIVIDAS, TOTAL_DIVIDAS, CREDIT_CARDS, RESERVA_LIQUIDA, RESERVA_META, SALARIO_MENSAL } from './data';
 import Header from './components/Header';
@@ -18,8 +18,13 @@ function App() {
   const [month, setMonth] = useState(monthsList[monthsList.length - 1]);
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('theme');
-    return saved || 'light';
+    if (saved) return saved;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   const currentMonthData = MONTHS_DATA[month];
   const monthIndex = monthsList.indexOf(month);
