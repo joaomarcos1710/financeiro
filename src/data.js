@@ -2,6 +2,49 @@
 
 export const SALARIO_MENSAL = 7167.51;
 
+// Dados de Maio 2026 (Relatório de Categorias + fatura do cartão — Organizze)
+// Posição patrimonial (Ativos/Dívidas) de fim de Maio não foi fornecida —
+// por isso este mês não entra no gráfico de evolução do Patrimônio Líquido.
+const maio2026 = {
+  label: 'Maio 2026',
+  totalReceitas: 56341.97,
+  totalDespesas: 34089.16,
+  aviso: 'Receita de Maio inclui R$ 30.682,75 de empréstimo novo (Empréstimo/CredPlan Variável, parcela 1/120 — captação de dívida) e R$ 8.588,77 de restituição de IR (não recorrente). Juntos são ~70% do total de receitas do mês. Sem eles, a receita operacional real seria ≈ R$ 17.070,45 contra R$ 34.089,16 de despesas.',
+  receitas: [
+    { categoria: 'Empréstimos', valor: 30682.75 },
+    { categoria: 'Receitas Variadas', valor: 9935.83 },
+    { categoria: 'Salário Caixa', valor: 7603.19 },
+    { categoria: 'Família', valor: 5826.00 },
+    { categoria: 'Outras receitas', valor: 2190.83 },
+    { categoria: 'Salário Mariane', valor: 66.31 },
+    { categoria: 'Pix', valor: 30.00 },
+    { categoria: 'Cashback', valor: 7.00 },
+    { categoria: 'Rendimentos', valor: 0.06 },
+  ],
+  despesas: [
+    { categoria: 'Financiamento e Empréstimos', valor: 5874.43 },
+    { categoria: 'Alimentação', valor: 4884.45 },
+    { categoria: 'Família', valor: 3699.00 },
+    { categoria: 'Compras', valor: 3615.48 },
+    { categoria: 'Mariane', valor: 2806.26 },
+    { categoria: 'Saúde', valor: 2301.75 },
+    { categoria: 'Gastos Bancários / PIX parcelado', valor: 2138.07 },
+    { categoria: 'Transporte', valor: 1885.06 },
+    { categoria: 'Casa', valor: 1764.02 },
+    { categoria: 'Viagem', valor: 996.70 },
+    { categoria: 'Assinaturas e Serviços', valor: 965.20 },
+    { categoria: 'Mercado / Feira / Hortifruti', valor: 919.50 },
+    { categoria: 'Pets', valor: 512.34 },
+    { categoria: 'Investimentos (Dólar)', valor: 454.72 },
+    { categoria: 'GYMPASS (Sidney + Júlia)', valor: 399.98 },
+    { categoria: 'Outros (Loteria)', valor: 376.02 },
+    { categoria: 'Lazer e Hobbies (Corrida)', valor: 339.79 },
+    { categoria: 'Despesas Pessoais', valor: 149.89 },
+    { categoria: 'Diversos', valor: 6.50 },
+  ]
+  // sem ativos/dividas: posição patrimonial de fim de Maio não informada
+};
+
 // Dados de Junho 2026 (do seu fechamento)
 const junho2026 = {
   label: 'Junho 2026',
@@ -53,6 +96,12 @@ const junho2026 = {
 };
 
 function totalsFor(month) {
+  if (!month.ativos || !month.dividas) {
+    // Mês sem fechamento patrimonial (Ativos/Dívidas) informado —
+    // entra no dashboard com fluxo (receitas/despesas), mas fica de fora
+    // do gráfico de evolução do Patrimônio Líquido.
+    return { ...month, patrimonio: null, dividas_total: null };
+  }
   const totalAtivos = month.ativos.reduce((sum, a) => sum + a.valor, 0);
   const totalDividas = month.dividas.reduce((sum, d) => sum + d.saldo, 0);
   return { ...month, patrimonio: totalAtivos, dividas_total: totalDividas };
@@ -61,6 +110,7 @@ function totalsFor(month) {
 // Julho 2026 ainda não foi fechado no Obsidian (arquivo de fechamento
 // está com as tabelas vazias) — só entra aqui quando você preencher.
 export const MONTHS_DATA = {
+  '2026-05': totalsFor(maio2026),
   '2026-06': totalsFor(junho2026)
 };
 

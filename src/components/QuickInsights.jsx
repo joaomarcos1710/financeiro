@@ -25,6 +25,11 @@ export default function QuickInsights({ data, metrics, previousMetrics }) {
       <h3 style={{ fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted)', marginBottom: '16px' }}>
         INSIGHTS RÁPIDOS
       </h3>
+      {data.aviso && (
+        <p style={{ fontSize: '13px', margin: '0 0 16px 0', lineHeight: '1.6', color: 'var(--alert)', fontWeight: 600 }}>
+          ⚠ {data.aviso}
+        </p>
+      )}
       {insights.map((insight, i) => (
         <p key={i} style={{ fontSize: '14px', margin: '8px 0', lineHeight: '1.6' }}>
           <span style={{ color: 'var(--accent)', marginRight: '8px' }}>·</span>

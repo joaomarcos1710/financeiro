@@ -2,12 +2,14 @@ import { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, Ca
 import { MONTHS_DATA } from '../data';
 
 export default function ChartsRow({ data, metrics }) {
-  // Net worth evolution
-  const netWorthData = Object.entries(MONTHS_DATA).map(([key, month]) => ({
-    mes: key.split('-')[1],
-    patrimonio: month.patrimonio - month.dividas_total,
-    dividas: month.dividas_total
-  }));
+  // Net worth evolution — só entram meses com posição patrimonial (Ativos/Dívidas) conhecida
+  const netWorthData = Object.entries(MONTHS_DATA)
+    .filter(([, month]) => month.patrimonio !== null && month.dividas_total !== null)
+    .map(([key, month]) => ({
+      mes: key.split('-')[1],
+      patrimonio: month.patrimonio - month.dividas_total,
+      dividas: month.dividas_total
+    }));
 
   // Spending by category
   const categorySpending = {};
