@@ -19,7 +19,10 @@ export default function ChartsRow({ data, metrics }) {
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value);
 
-  const COLORS = ['#E5341E', '#1F8A4C', '#E0A100', '#6B6B68', '#B3B3B0', '#8884d8', '#00C2A8', '#C2410C', '#0EA5E9', '#A855F7', '#D97706', '#22C55E', '#EC4899', '#64748B', '#84CC16', '#F43F5E', '#0E0E0E'];
+  // Paleta contida (design original): vermelho da marca primeiro, depois tons sóbrios
+  const COLORS = ['#E5341E', '#2A9D8F', '#3D6FB4', '#E0A100', '#7C5CBF', '#1F8A4C', '#C2410C', '#6B6B68', '#8FA3B0', '#B3B3B0'];
+
+  const totalDespesas = pieData.reduce((sum, d) => sum + d.value, 0);
 
   return (
     <div className="grid-2col">
@@ -48,7 +51,7 @@ export default function ChartsRow({ data, metrics }) {
               <YAxis stroke="var(--muted)" style={{ fontSize: '12px' }} />
               <Tooltip contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '4px', color: 'var(--text)' }} />
               <Legend wrapperStyle={{ color: 'var(--text)' }} />
-              <Area type="monotone" dataKey="patrimonio" stroke="var(--red)" fill="url(#gradNetWorth)" name="Patrimônio Líquido" />
+              <Area type="monotone" dataKey="patrimonio" stroke="var(--red)" fill="url(#gradNetWorth)" name="Patrimônio Líquido" isAnimationActive={false} />
             </AreaChart>
           </ResponsiveContainer>
         )}
@@ -58,32 +61,40 @@ export default function ChartsRow({ data, metrics }) {
         <h3 style={{ fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted)', marginBottom: '16px' }}>
           GASTOS POR CATEGORIA
         </h3>
-        <ResponsiveContainer width="100%" height={250}>
-          <PieChart>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <PieChart width={280} height={220}>
             <Pie
               data={pieData}
               cx="50%"
               cy="50%"
-              innerRadius={45}
-              outerRadius={80}
+              innerRadius={55}
+              outerRadius={85}
+              isAnimationActive={false}
               dataKey="value"
             >
               {pieData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
+            <text x={140} y={102} textAnchor="middle" fill="var(--muted)" style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.05em' }}>
+              TOTAL
+            </text>
+            <text x={140} y={124} textAnchor="middle" fill="var(--text)" style={{ fontFamily: 'League Gothic', fontSize: '20px', letterSpacing: '0.03em' }}>
+              R$ {totalDespesas.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+            </text>
             <Tooltip
               formatter={(value) => `R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
               contentStyle={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '4px', color: 'var(--text)' }}
             />
           </PieChart>
-        </ResponsiveContainer>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 16px', marginTop: '12px', justifyContent: 'center' }}>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '12px', maxHeight: '220px', overflowY: 'auto' }}>
           {pieData.map((entry, index) => (
-            <div key={entry.name} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px' }}>
+            <div key={entry.name} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px' }}>
               <span style={{ width: '8px', height: '8px', borderRadius: '2px', backgroundColor: COLORS[index % COLORS.length], flexShrink: 0 }}></span>
-              <span className="text-muted">{entry.name}</span>
-              <span>R$ {entry.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+              <span className="text-muted" style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{entry.name}</span>
+              <span style={{ fontWeight: 600 }}>R$ {entry.value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+              <span className="text-muted" style={{ width: '42px', textAlign: 'right' }}>{((entry.value / totalDespesas) * 100).toFixed(1)}%</span>
             </div>
           ))}
         </div>

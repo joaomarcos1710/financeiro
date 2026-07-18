@@ -1,16 +1,22 @@
 export default function KPICards({ metrics, previousMetrics, previousMonthData }) {
+  const delta = (atual, anterior) => {
+    const diff = atual - anterior;
+    const seta = diff >= 0 ? '▲' : '▼';
+    return `${seta} R$ ${Math.abs(diff).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} vs mês anterior`;
+  };
+
   const kpiItems = [
     {
       label: 'Receita do Mês',
       value: metrics.totalReceitas,
       color: 'var(--green)',
-      subtitle: previousMetrics ? `▲ R$ ${(metrics.totalReceitas - previousMetrics.totalReceitas).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : ''
+      subtitle: previousMetrics ? delta(metrics.totalReceitas, previousMetrics.totalReceitas) : ''
     },
     {
       label: 'Despesas do Mês',
       value: metrics.totalDespesas,
       color: 'var(--alert)',
-      subtitle: previousMetrics ? `▲ R$ ${(metrics.totalDespesas - previousMetrics.totalDespesas).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}` : ''
+      subtitle: previousMetrics ? delta(metrics.totalDespesas, previousMetrics.totalDespesas) : ''
     },
     {
       label: 'Saldo do Mês',

@@ -11,49 +11,49 @@ export default function Header({ month, onMonthChange, monthsList, theme, onThem
       <div style={{
         maxWidth: '1360px',
         margin: '0 auto',
-        padding: '20px 28px',
+        padding: '16px 28px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         flexWrap: 'wrap',
-        gap: '20px'
+        gap: '16px'
       }}>
-        <div>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '16px', flexWrap: 'wrap' }}>
           <div style={{
             fontSize: '30px',
             fontFamily: 'League Gothic',
-            fontWeight: '400',
-            letterSpacing: '0.05em',
-            lineHeight: '1.2'
+            letterSpacing: '0.02em',
+            lineHeight: '1'
           }}>
-            <span>JM.</span>
-            <span style={{ color: 'var(--accent)' }}>.</span>
+            JM<span style={{ color: 'var(--accent)' }}>.</span>
           </div>
-          <h1 style={{
-            fontSize: '18px',
-            fontFamily: 'League Gothic',
-            fontWeight: '400',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            margin: '0',
-            lineHeight: '1.2'
-          }}>
-            CONTROLE FINANCEIRO
-          </h1>
-          <p style={{
-            fontSize: '12px',
-            color: 'var(--muted)',
-            margin: '4px 0 0',
-            fontWeight: '400'
-          }}>
-            Dashboard de controle mensal
-          </p>
+          <div>
+            <h1 style={{
+              fontSize: '18px',
+              fontFamily: 'League Gothic',
+              fontWeight: '400',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              margin: 0,
+              lineHeight: '1.2'
+            }}>
+              CONTROLE FINANCEIRO
+            </h1>
+            <p style={{
+              fontSize: '12px',
+              color: 'var(--muted)',
+              margin: 0
+            }}>
+              Acompanhamento mensal · João Marcos
+            </p>
+          </div>
         </div>
 
         <div style={{
           display: 'flex',
-          gap: '16px',
-          alignItems: 'center'
+          gap: '12px',
+          alignItems: 'center',
+          flexWrap: 'wrap'
         }}>
           <select
             value={month}
@@ -65,27 +65,45 @@ export default function Header({ month, onMonthChange, monthsList, theme, onThem
               backgroundColor: 'var(--surface)',
               color: 'var(--text)',
               fontSize: '12px',
+              fontWeight: '600',
               cursor: 'pointer',
               fontFamily: 'Hanken Grotesk, sans-serif'
             }}
           >
             {monthsList.map(m => (
               <option key={m} value={m}>
-                {new Date(m + '-01').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                {new Date(m + '-15').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
               </option>
             ))}
           </select>
 
-          <button
-            onClick={onThemeToggle}
-            className="btn-pill"
-            style={{
-              backgroundColor: theme === 'light' ? 'var(--text)' : 'var(--surfaceAlt)',
-              color: theme === 'light' ? 'var(--bg)' : 'var(--text)'
-            }}
-          >
-            {theme === 'light' ? 'CLARO' : 'ESCURO'}
-          </button>
+          <div style={{
+            display: 'flex',
+            border: '1px solid var(--border)',
+            borderRadius: '20px',
+            overflow: 'hidden'
+          }}>
+            {[['light', 'CLARO'], ['dark', 'ESCURO']].map(([value, label]) => (
+              <button
+                key={value}
+                onClick={() => theme !== value && onThemeToggle()}
+                style={{
+                  border: 'none',
+                  borderRadius: '20px',
+                  padding: '6px 14px',
+                  fontSize: '11px',
+                  fontWeight: '700',
+                  letterSpacing: '0.03em',
+                  cursor: 'pointer',
+                  backgroundColor: theme === value ? 'var(--text)' : 'transparent',
+                  color: theme === value ? 'var(--bg)' : 'var(--muted)',
+                  transition: 'background-color 0.2s, color 0.2s'
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </header>
