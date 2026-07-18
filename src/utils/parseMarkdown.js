@@ -134,3 +134,34 @@ export function formatMoeda(valor) {
     currency: 'BRL'
   });
 }
+
+// Divide um markdown em seções por título (## ou ###) e parseia as tabelas
+// de cada seção. Usado pelos scripts de build para ler arquivos .md "crus"
+// (copiados do Obsidian) sem precisar de um parser de markdown completo.
+export function parseMarkdownSections(markdown) {
+  const lines = markdown.split('\n');
+  const rawSections = [];
+  let current = null;
+
+  for (const line of lines) {
+    const headingMatch = line.match(/^(#{2,4})\s+(.*)$/);
+    if (headingMatch) {
+      if (current) rawSections.push(current);
+      current = { title: headingMatch[2].trim(), level: headingMatch[1].length, lines: [] };
+    } else if (current) {
+      current.lines.push(line);
+    }
+  }
+  if (current) rawSections.push(current);
+
+  return rawSections.map(section => ({
+    title: section.title,
+    tables: parseMarkdownTable(section.lines.join('\n'))
+  }));
+}
+
+// Encontra a primeira seção cujo título (case-insensitive) contém `needle`.
+export function findSection(sections, needle) {
+  const target = needle.toLowerCase();
+  return sections.find(s => s.title.toLowerCase().includes(target));
+}

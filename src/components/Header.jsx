@@ -1,3 +1,21 @@
+import { NavLink } from 'react-router-dom';
+
+function navLinkStyle({ isActive }) {
+  return {
+    padding: '6px 14px',
+    borderRadius: '20px',
+    fontSize: '11px',
+    fontWeight: '700',
+    letterSpacing: '0.03em',
+    textTransform: 'uppercase',
+    textDecoration: 'none',
+    cursor: 'pointer',
+    backgroundColor: isActive ? 'var(--text)' : 'transparent',
+    color: isActive ? 'var(--bg)' : 'var(--muted)',
+    transition: 'background-color 0.2s, color 0.2s'
+  };
+}
+
 export default function Header({ month, onMonthChange, monthsList, theme, onThemeToggle }) {
   return (
     <header style={{
@@ -49,33 +67,48 @@ export default function Header({ month, onMonthChange, monthsList, theme, onThem
           </div>
         </div>
 
+        <nav style={{
+          display: 'flex',
+          gap: '4px',
+          alignItems: 'center',
+          border: '1px solid var(--border)',
+          borderRadius: '20px',
+          padding: '2px',
+          flexWrap: 'wrap'
+        }}>
+          <NavLink to="/" end style={navLinkStyle}>Dashboard</NavLink>
+          <NavLink to="/contas-fixas" style={navLinkStyle}>Contas Fixas</NavLink>
+        </nav>
+
         <div style={{
           display: 'flex',
           gap: '12px',
           alignItems: 'center',
           flexWrap: 'wrap'
         }}>
-          <select
-            value={month}
-            onChange={(e) => onMonthChange(e.target.value)}
-            style={{
-              padding: '8px 12px',
-              borderRadius: '4px',
-              border: '1px solid var(--border)',
-              backgroundColor: 'var(--surface)',
-              color: 'var(--text)',
-              fontSize: '12px',
-              fontWeight: '600',
-              cursor: 'pointer',
-              fontFamily: 'Hanken Grotesk, sans-serif'
-            }}
-          >
-            {monthsList.map(m => (
-              <option key={m} value={m}>
-                {new Date(m + '-15').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
-              </option>
-            ))}
-          </select>
+          {monthsList && (
+            <select
+              value={month}
+              onChange={(e) => onMonthChange(e.target.value)}
+              style={{
+                padding: '8px 12px',
+                borderRadius: '4px',
+                border: '1px solid var(--border)',
+                backgroundColor: 'var(--surface)',
+                color: 'var(--text)',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                fontFamily: 'Hanken Grotesk, sans-serif'
+              }}
+            >
+              {monthsList.map(m => (
+                <option key={m} value={m}>
+                  {new Date(m + '-15').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                </option>
+              ))}
+            </select>
+          )}
 
           <div style={{
             display: 'flex',
