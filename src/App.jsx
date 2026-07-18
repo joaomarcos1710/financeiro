@@ -1,0 +1,100 @@
+import { useState, useMemo } from 'react';
+import './App.css';
+import { MONTHS_DATA, BUDGETS, ATIVOS, TOTAL_ATIVOS, DIVIDAS, TOTAL_DIVIDAS, CREDIT_CARDS, RESERVA_LIQUIDA, RESERVA_META, SALARIO_MENSAL } from './data';
+import Header from './components/Header';
+import QuickInsights from './components/QuickInsights';
+import KPICards from './components/KPICards';
+import PreviousMonthComparison from './components/PreviousMonthComparison';
+import ChartsRow from './components/ChartsRow';
+import DailySpendingChart from './components/DailySpendingChart';
+import EmergencyReserve from './components/EmergencyReserve';
+import BudgetByCategory from './components/BudgetByCategory';
+import Debts from './components/Debts';
+import CreditCards from './components/CreditCards';
+import RecentTransactions from './components/RecentTransactions';
+
+function App() {
+  const [month, setMonth] = useState('2026-07');
+  const [theme, setTheme] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved || 'light';
+  });
+
+  const currentMonthData = MONTHS_DATA[month];
+  const previousMonth = month === '2026-06' ? null : '2026-06';
+  const previousMonthData = previousMonth ? MONTHS_DATA[previousMonth] : null;
+
+  const monthsList = Object.keys(MONTHS_DATA);
+
+  const currentMetrics = useMemo(() => {
+    if (!currentMonthData) return null;
+
+    const totalReceitas = currentMonthData.receitas.reduce((sum, r) => sum + r.valor, 0);
+    const totalDespesas = currentMonthData.despesas.reduce((sum, d) => sum + d.valor, 0);
+    const saldo = totalReceitas - totalDespesas;
+    const economia = totalReceitas > 0 ? (saldo / totalReceitas) * 100 : 0;
+
+    return {
+      totalReceitas,
+      totalDespesas,
+      saldo,
+      economia,
+      patrimonio: currentMonthData.patrimonio,
+      dividas: currentMonthData.dividas,
+      patrimonioLiquido: currentMonthData.patrimonio - currentMonthData.dividas
+    };
+  }, [currentMonthData]);
+
+  const previousMetrics = useMemo(() => {
+    if (!previousMonthData) return null;
+
+    const totalReceitas = previousMonthData.receitas.reduce((sum, r) => sum + r.valor, 0);
+    const totalDespesas = previousMonthData.despesas.reduce((sum, d) => sum + d.valor, 0);
+    const saldo = totalReceitas - totalDespesas;
+    const economia = totalReceitas > 0 ? (saldo / totalReceitas) * 100 : 0;
+
+    return {
+      totalReceitas,
+      totalDespesas,
+      saldo,
+      economia,
+      patrimonio: previousMonthData.patrimonio,
+      dividas: previousMonthData.dividas,
+      patrimonioLiquido: previousMonthData.patrimonio - previousMonthData.dividas
+    };
+  }, [previousMonthData]);
+
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+  };
+
+  if (!currentMetrics) return null;
+
+  return (
+    <div className="app" data-theme={theme}>
+      <Header
+        month={month}
+        onMonthChange={setMonth}
+        monthsList={monthsList}
+        theme={theme}
+        onThemeToggle={toggleTheme}
+      />
+      <main>
+        <QuickInsights data={currentMonthData} metrics={currentMetrics} previousMetrics={previousMetrics} />
+        <KPICards metrics={currentMetrics} previousMetrics={previousMetrics} previousMonthData={previousMonthData} />
+        {previousMonthData && <PreviousMonthComparison metrics={currentMetrics} previousMetrics={previousMetrics} />}
+        <ChartsRow data={currentMonthData} metrics={currentMetrics} />
+        <DailySpendingChart data={currentMonthData} />
+        <EmergencyReserve />
+        <BudgetByCategory data={currentMonthData} budgets={BUDGETS} />
+        <Debts dividas={DIVIDAS} ativos={ATIVOS} />
+        <CreditCards cards={CREDIT_CARDS} />
+        <RecentTransactions data={currentMonthData} />
+      </main>
+    </div>
+  );
+}
+
+export default App;
