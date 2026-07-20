@@ -1,5 +1,6 @@
 import { CARTAO_FIXO, CONTA_FIXO, TOTAL_CARTAO_FIXO, TOTAL_CONTA_FIXO, TOTAL_CONTAS_FIXAS } from '../data/generated/contasFixas';
 import { DIVIDAS, TOTAL_DIVIDAS } from '../data';
+import { FATURA, TOTAL_PARCELAS_MES } from '../data/fatura';
 import Header from '../components/Header';
 
 const sectionTitleStyle = {
@@ -29,6 +30,13 @@ export default function ContasFixas({ theme, onThemeToggle }) {
                 {fmt(TOTAL_CONTAS_FIXAS)}
               </div>
               <p className="text-muted text-sm">Cartão {fmt(TOTAL_CARTAO_FIXO)} + Conta {fmt(TOTAL_CONTA_FIXO)}</p>
+            </div>
+            <div>
+              <p className="label-uppercase">Parcelas de Cartão Ativas</p>
+              <div style={{ fontFamily: 'League Gothic', fontSize: '28px', color: 'var(--amber)' }}>
+                {fmt(TOTAL_PARCELAS_MES)}
+              </div>
+              <p className="text-muted text-sm">{FATURA.parcelas.length} compras parceladas em andamento</p>
             </div>
             <div>
               <p className="label-uppercase">Saldo Devedor — Empréstimos e Financiamentos</p>
@@ -95,14 +103,36 @@ export default function ContasFixas({ theme, onThemeToggle }) {
           </div>
         </div>
 
-        <div className="card-alt" style={{ marginBottom: '28px', padding: '20px' }}>
-          <h3 style={sectionTitleStyle}>PARCELAS DE CARTÃO ATIVAS (COMPRAS PARCELADAS)</h3>
-          <p className="text-muted" style={{ fontSize: '13px', lineHeight: '1.6' }}>
-            Ainda não temos uma fonte completa e atualizada pra essa seção. Assim que você exportar o
-            relatório <strong>"Compras Parceladas"</strong> do Organizze (Cartões → Compras Parceladas) e colocar
-            no Obsidian, essa seção passa a listar cada compra parcelada, quantas parcelas faltam e o valor
-            restante — igual às duas tabelas acima.
+        <div className="card" style={{ marginBottom: '28px' }}>
+          <h3 style={sectionTitleStyle}>
+            PARCELAS DE CARTÃO ATIVAS — COMPRAS PARCELADAS ({fmt(TOTAL_PARCELAS_MES)}/MÊS)
+          </h3>
+          <p className="text-muted text-sm" style={{ marginBottom: '16px' }}>
+            Da fatura de {new Date(FATURA.competencia + '-15').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })} (vence {FATURA.vencimento}).
           </p>
+          <div style={{ overflowX: 'auto' }}>
+            <table>
+              <thead>
+                <tr>
+                  <th>Descrição</th>
+                  <th>Parcela</th>
+                  <th style={{ textAlign: 'right' }}>Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+                {FATURA.parcelas.map((p, i) => (
+                  <tr key={i}>
+                    <td>
+                      {p.descricao}
+                      {p.atual === p.de && <span className="badge" style={{ marginLeft: '8px', backgroundColor: 'var(--surfaceAlt)', color: 'var(--green)' }}>última</span>}
+                    </td>
+                    <td className="text-muted">{p.atual}/{p.de}</td>
+                    <td style={{ textAlign: 'right' }}>{fmt(p.valor)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="card">
