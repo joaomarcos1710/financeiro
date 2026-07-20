@@ -1,4 +1,5 @@
 // Dados REAIS do seu Obsidian
+import { FATURA } from './data/fatura';
 
 export const SALARIO_MENSAL = 7167.51;
 
@@ -96,22 +97,38 @@ const junho2026 = {
 };
 
 function totalsFor(month) {
+  // "fechado" = mês tem fluxo lançado (receitas/despesas). Meses só com
+  // fatura de cartão (sem fechamento) entram como não-fechados.
+  const fechado = Array.isArray(month.receitas) && month.receitas.length > 0;
   if (!month.ativos || !month.dividas) {
     // Mês sem fechamento patrimonial (Ativos/Dívidas) informado —
     // entra no dashboard com fluxo (receitas/despesas), mas fica de fora
     // do gráfico de evolução do Patrimônio Líquido.
-    return { ...month, patrimonio: null, dividas_total: null };
+    return { ...month, fechado, patrimonio: null, dividas_total: null };
   }
   const totalAtivos = month.ativos.reduce((sum, a) => sum + a.valor, 0);
   const totalDividas = month.dividas.reduce((sum, d) => sum + d.saldo, 0);
-  return { ...month, patrimonio: totalAtivos, dividas_total: totalDividas };
+  return { ...month, fechado, patrimonio: totalAtivos, dividas_total: totalDividas };
 }
 
-// Julho 2026 ainda não foi fechado no Obsidian (arquivo de fechamento
-// está com as tabelas vazias) — só entra aqui quando você preencher.
+// Cada mês pode ter fluxo (fechamento) e/ou fatura de cartão.
+// Maio e Junho estão fechados (Obsidian). Julho AINDA não foi fechado —
+// só temos a fatura do cartão (vence 28/07). Quando você mandar o
+// fechamento de julho, os KPIs e gráficos preenchem automaticamente.
 export const MONTHS_DATA = {
-  '2026-05': totalsFor(maio2026),
-  '2026-06': totalsFor(junho2026)
+  '2026-05': { ...totalsFor(maio2026), fatura: null },
+  '2026-06': { ...totalsFor(junho2026), fatura: null },
+  '2026-07': {
+    label: 'Julho 2026',
+    fechado: false,
+    fatura: FATURA,
+    receitas: [],
+    despesas: [],
+    ativos: [],
+    dividas: [],
+    patrimonio: null,
+    dividas_total: null,
+  },
 };
 
 // Orçamento mensal (do seu arquivo)
@@ -133,10 +150,6 @@ export const TOTAL_ATIVOS = ATIVOS.reduce((sum, a) => sum + a.valor, 0);
 
 export const DIVIDAS = junho2026.dividas;
 export const TOTAL_DIVIDAS = DIVIDAS.reduce((sum, d) => sum + d.saldo, 0);
-
-export const CREDIT_CARDS = [
-  { nome: 'Cartão Visa', fecha: '15', limiteDisponivel: 5000, faturaAtual: 22246.38 }
-];
 
 export const RESERVA_LIQUIDA = ATIVOS
   .filter(a => ['Conta Corrente CAIXA', 'Mercado Pago'].includes(a.nome))
