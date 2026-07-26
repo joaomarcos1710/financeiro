@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import Dashboard from './pages/Dashboard';
 import ContasFixas from './pages/ContasFixas';
+import Renda from './pages/Renda';
 
 function App() {
   const [theme, setTheme] = useState(() => {
@@ -26,6 +27,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Dashboard theme={theme} onThemeToggle={toggleTheme} />} />
         <Route path="/contas-fixas" element={<ContasFixas theme={theme} onThemeToggle={toggleTheme} />} />
+        <Route path="/renda" element={<Renda theme={theme} onThemeToggle={toggleTheme} />} />
       </Routes>
     </div>
   );
