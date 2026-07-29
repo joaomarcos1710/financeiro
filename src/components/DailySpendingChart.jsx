@@ -6,7 +6,7 @@ function DailyFlowChart({ diario }) {
   return (
     <div className="card">
       <h3 style={{ fontSize: '11px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted)', marginBottom: '16px' }}>
-        ENTRADAS E SAÍDAS POR DIA (CONTA CORRENTE)
+        ENTRADAS E SAÍDAS POR DIA (TODAS AS CONTAS)
       </h3>
       <ResponsiveContainer width="100%" height={320}>
         <ComposedChart data={diario} margin={{ left: 10, right: 10 }}>
