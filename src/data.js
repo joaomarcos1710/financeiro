@@ -127,7 +127,7 @@ const julho2026 = {
     { categoria: 'Outros (Loteria)', valor: 657.96 },
     { categoria: 'Despesas Pessoais', valor: 335.39 },
   ],
-  // Entradas e saídas diárias — Relatório Organizze (conta corrente)
+  // Entradas e saídas diárias — Relatório Organizze (todas as contas)
   diario: [
     { dia: '01', entradas: 1947.5, saidas: 165.0, saldo: 2213.21 },
     { dia: '02', entradas: 5.0, saidas: 100.0, saldo: 2118.21 },
@@ -165,6 +165,7 @@ const julho2026 = {
     { nome: 'Conta Corrente CAIXA', valor: 472.05 },
     { nome: 'Mercado Pago', valor: 6.54 },
     { nome: 'Nomad (Investimento USD)', valor: 356.61 },
+    { nome: 'Dinheiro em Carteira', valor: 198.41 },
     { nome: 'Previdência CAIXA', valor: 188086.34 },
     { nome: 'FGTS', valor: 18434.82 }
   ],
