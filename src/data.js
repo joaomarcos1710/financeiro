@@ -96,6 +96,53 @@ const junho2026 = {
   ]
 };
 
+// Dados de Julho 2026 (Fechamento Julho — Obsidian)
+const julho2026 = {
+  label: 'Julho 2026',
+  totalReceitas: 22240.52,
+  totalDespesas: 20934.91,
+  receitas: [
+    { categoria: 'Salário Caixa', valor: 9137.51 },
+    { categoria: 'Família', valor: 7500.00 },
+    { categoria: 'Outras receitas', valor: 3500.00 },
+    { categoria: 'Rendimentos', valor: 1000.00 },
+    { categoria: 'Cashback', valor: 1103.01 },
+  ],
+  despesas: [
+    { categoria: 'Financiamento e Empréstimos', valor: 6558.15 },
+    { categoria: 'Alimentação', valor: 2077.33 },
+    { categoria: 'Compras', valor: 1968.45 },
+    { categoria: 'Transporte', valor: 1455.63 },
+    { categoria: 'Saúde', valor: 1200.00 },
+    { categoria: 'Viagem', valor: 1150.00 },
+    { categoria: 'Assinaturas e Serviços', valor: 1210.80 },
+    { categoria: 'Pets', valor: 920.34 },
+    { categoria: 'Gastos Bancários / PIX parcelado', valor: 863.27 },
+    { categoria: 'Casa', valor: 650.00 },
+    { categoria: 'Mariane', valor: 520.00 },
+    { categoria: 'Mercado / Feira / Hortifruti', valor: 420.00 },
+    { categoria: 'Lazer e Hobbies (Corrida)', valor: 400.00 },
+    { categoria: 'Investimentos (Dólar)', valor: 356.61 },
+    { categoria: 'GYMPASS (Sidney + Júlia)', valor: 399.98 },
+    { categoria: 'Outros (Loteria)', valor: 657.96 },
+    { categoria: 'Despesas Pessoais', valor: 335.39 },
+  ],
+  ativos: [
+    { nome: 'Conta Corrente CAIXA', valor: 472.05 },
+    { nome: 'Mercado Pago', valor: 6.54 },
+    { nome: 'Nomad (Investimento USD)', valor: 356.61 },
+    { nome: 'Previdência CAIXA', valor: 188086.34 },
+    { nome: 'FGTS', valor: 18434.82 }
+  ],
+  dividas: [
+    { nome: 'Financiamento Habitação', saldo: 158834.85, parcelas: 357 },
+    { nome: 'CredPlan Variável', saldo: 147428.03, parcelas: 117 },
+    { nome: 'Cartão Visa', saldo: 13188.27 },
+    { nome: 'CredPlan Fixo', saldo: 33147.88, parcelas: 46 },
+    { nome: 'Consignado', saldo: 25904.80, parcelas: 142 }
+  ]
+};
+
 function totalsFor(month) {
   // "fechado" = mês tem fluxo lançado (receitas/despesas). Meses só com
   // fatura de cartão (sem fechamento) entram como não-fechados.
@@ -112,23 +159,11 @@ function totalsFor(month) {
 }
 
 // Cada mês pode ter fluxo (fechamento) e/ou fatura de cartão.
-// Maio e Junho estão fechados (Obsidian). Julho AINDA não foi fechado —
-// só temos a fatura do cartão (vence 28/07). Quando você mandar o
-// fechamento de julho, os KPIs e gráficos preenchem automaticamente.
+// Maio e Junho estão fechados (Obsidian). Julho AGORA está fechado também!
 export const MONTHS_DATA = {
   '2026-05': { ...totalsFor(maio2026), fatura: null },
   '2026-06': { ...totalsFor(junho2026), fatura: null },
-  '2026-07': {
-    label: 'Julho 2026',
-    fechado: false,
-    fatura: FATURA,
-    receitas: [],
-    despesas: [],
-    ativos: [],
-    dividas: [],
-    patrimonio: null,
-    dividas_total: null,
-  },
+  '2026-07': { ...totalsFor(julho2026), fatura: FATURA },
 };
 
 // Orçamento mensal (do seu arquivo)
@@ -145,10 +180,10 @@ export const BUDGETS = {
   'Mariane': 1100
 };
 
-export const ATIVOS = junho2026.ativos;
+export const ATIVOS = julho2026.ativos;
 export const TOTAL_ATIVOS = ATIVOS.reduce((sum, a) => sum + a.valor, 0);
 
-export const DIVIDAS = junho2026.dividas;
+export const DIVIDAS = julho2026.dividas;
 export const TOTAL_DIVIDAS = DIVIDAS.reduce((sum, d) => sum + d.saldo, 0);
 
 export const RESERVA_LIQUIDA = ATIVOS
