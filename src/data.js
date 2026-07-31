@@ -166,6 +166,7 @@ const julho2026 = {
     { nome: 'Mercado Pago', valor: 6.54 },
     { nome: 'Nomad (Investimento USD)', valor: 356.61 },
     { nome: 'Dinheiro em Carteira', valor: 198.41 },
+    { nome: 'Pi Network (538,92 PI)', valor: 220.96 },
     { nome: 'Previdência CAIXA', valor: 188086.34 },
     { nome: 'FGTS', valor: 18434.82 }
   ],
