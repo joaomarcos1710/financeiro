@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { MONTHS_DATA, BUDGETS, ATIVOS, DIVIDAS } from '../data';
 import Header from '../components/Header';
 import QuickInsights from '../components/QuickInsights';
+import FinancialHealth from '../components/FinancialHealth';
 import KPICards from '../components/KPICards';
 import PreviousMonthComparison from '../components/PreviousMonthComparison';
 import ChartsRow from '../components/ChartsRow';
@@ -82,6 +83,7 @@ export default function Dashboard({ theme, onThemeToggle }) {
         {fechado ? (
           <>
             <QuickInsights data={currentMonthData} metrics={currentMetrics} previousMetrics={previousMetrics} />
+            <FinancialHealth metrics={currentMetrics} previousMetrics={previousMetrics} />
             <KPICards metrics={currentMetrics} previousMetrics={previousMetrics} previousMonthData={previousMonthData} />
             {previousMetrics && <PreviousMonthComparison metrics={currentMetrics} previousMetrics={previousMetrics} />}
             <ChartsRow data={currentMonthData} metrics={currentMetrics} />
