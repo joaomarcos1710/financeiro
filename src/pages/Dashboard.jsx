@@ -30,8 +30,12 @@ export default function Dashboard({ theme, onThemeToggle }) {
   const currentMetrics = useMemo(() => {
     if (!currentMonthData || !currentMonthData.fechado) return null;
 
-    const totalReceitas = currentMonthData.receitas.reduce((sum, r) => sum + r.valor, 0);
-    const totalDespesas = currentMonthData.despesas.reduce((sum, d) => sum + d.valor, 0);
+    const totalReceitas = currentMonthData.receitas.length > 0
+      ? currentMonthData.receitas.reduce((sum, r) => sum + r.valor, 0)
+      : (currentMonthData.totalReceitas || 0);
+    const totalDespesas = currentMonthData.despesas.length > 0
+      ? currentMonthData.despesas.reduce((sum, d) => sum + d.valor, 0)
+      : (currentMonthData.totalDespesas || 0);
     const saldo = totalReceitas - totalDespesas;
     const economia = totalReceitas > 0 ? (saldo / totalReceitas) * 100 : 0;
 
@@ -49,8 +53,12 @@ export default function Dashboard({ theme, onThemeToggle }) {
   const previousMetrics = useMemo(() => {
     if (!previousMonthData || !previousMonthData.fechado) return null;
 
-    const totalReceitas = previousMonthData.receitas.reduce((sum, r) => sum + r.valor, 0);
-    const totalDespesas = previousMonthData.despesas.reduce((sum, d) => sum + d.valor, 0);
+    const totalReceitas = previousMonthData.receitas.length > 0
+      ? previousMonthData.receitas.reduce((sum, r) => sum + r.valor, 0)
+      : (previousMonthData.totalReceitas || 0);
+    const totalDespesas = previousMonthData.despesas.length > 0
+      ? previousMonthData.despesas.reduce((sum, d) => sum + d.valor, 0)
+      : (previousMonthData.totalDespesas || 0);
     const saldo = totalReceitas - totalDespesas;
     const economia = totalReceitas > 0 ? (saldo / totalReceitas) * 100 : 0;
 
@@ -84,10 +92,10 @@ export default function Dashboard({ theme, onThemeToggle }) {
             <QuickInsights data={currentMonthData} metrics={currentMetrics} previousMetrics={previousMetrics} />
             <KPICards metrics={currentMetrics} previousMetrics={previousMetrics} previousMonthData={previousMonthData} />
             {previousMetrics && <PreviousMonthComparison metrics={currentMetrics} previousMetrics={previousMetrics} />}
-            <ChartsRow data={currentMonthData} metrics={currentMetrics} />
-            <DailySpendingChart data={currentMonthData} />
+            {currentMonthData.despesas.length > 0 && <ChartsRow data={currentMonthData} metrics={currentMetrics} />}
+            {currentMonthData.despesas.length > 0 && <DailySpendingChart data={currentMonthData} />}
             <EmergencyReserve />
-            <BudgetByCategory data={currentMonthData} budgets={BUDGETS} />
+            {currentMonthData.despesas.length > 0 && <BudgetByCategory data={currentMonthData} budgets={BUDGETS} />}
             <Debts dividas={DIVIDAS} ativos={ATIVOS} />
           </>
         ) : (
@@ -96,16 +104,15 @@ export default function Dashboard({ theme, onThemeToggle }) {
               {currentMonthData.label.toUpperCase()} AINDA NÃO FOI FECHADO
             </div>
             <p className="text-muted" style={{ maxWidth: '520px', margin: '0 auto', fontSize: '14px' }}>
-              Por enquanto só a fatura do cartão está disponível para este mês. Me mande o
-              fechamento (receitas, despesas e posição patrimonial) para preencher os KPIs,
-              gráficos e comparações.
+              Preencha o mês no Notion (Fechamentos, Ativos e Dívidas) — o site atualiza
+              sozinho no dia seguinte, ou na hora rodando a Action manualmente.
             </p>
           </div>
         )}
 
         {currentMonthData.fatura && <FaturaCartao fatura={currentMonthData.fatura} />}
 
-        {fechado && <RecentTransactions data={currentMonthData} />}
+        {fechado && currentMonthData.receitas.length > 0 && <RecentTransactions data={currentMonthData} />}
       </main>
     </>
   );
