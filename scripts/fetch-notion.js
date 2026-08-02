@@ -1,5 +1,5 @@
 // Busca dados do Notion (fonte oficial) e grava src/data/notion.json
-// Roda no prebuild. Sem NOTION_TOKEN ou com erro, mantém o json existente.
+// Roda no prebuild. Sem NOTION_TOKEN ou com erro, mantem o json existente.
 import { writeFileSync, existsSync } from 'fs';
 
 const TOKEN = process.env.NOTION_TOKEN;
@@ -11,6 +11,7 @@ const DBS = {
   dividas: '03ded164a5e24b3b86a80f6a0093997e',
   renda: 'd78b26ad17aa440ca7cf673446eebf88',
   investimentos: '7020265d26914d61be028ba7299bab2f',
+  contasFixas: '3329521dda63493791efa733b273415b',
 };
 
 const plain = (rich) => (rich || []).map((r) => r.plain_text).join('');
@@ -20,6 +21,7 @@ const text = (page, name) => plain(prop(page, name)?.rich_text);
 const title = (page, name) => plain(prop(page, name)?.title);
 const select = (page, name) => prop(page, name)?.select?.name ?? null;
 const date = (page, name) => prop(page, name)?.date?.start ?? null;
+const checkbox = (page, name) => prop(page, name)?.checkbox ?? false;
 
 async function queryAll(dbId) {
   const results = [];
@@ -49,12 +51,12 @@ async function main() {
       return;
     }
     console.log('fetch-notion: sem NOTION_TOKEN e sem json — gravando vazio.');
-    writeFileSync(OUT, JSON.stringify({ fetchedAt: null, fechamentos: [], ativos: [], dividas: [], renda: [], investimentos: [] }, null, 2));
+    writeFileSync(OUT, JSON.stringify({ fetchedAt: null, fechamentos: [], ativos: [], dividas: [], renda: [], investimentos: [], contasFixas: [] }, null, 2));
     return;
   }
   try {
-    const [fech, ativ, div, ren, inv] = await Promise.all([
-      queryAll(DBS.fechamentos), queryAll(DBS.ativos), queryAll(DBS.dividas), queryAll(DBS.renda), queryAll(DBS.investimentos),
+    const [fech, ativ, div, ren, inv, cf] = await Promise.all([
+      queryAll(DBS.fechamentos), queryAll(DBS.ativos), queryAll(DBS.dividas), queryAll(DBS.renda), queryAll(DBS.investimentos), queryAll(DBS.contasFixas),
     ]);
     const data = {
       fetchedAt: new Date().toISOString(),
@@ -70,16 +72,21 @@ async function main() {
         parcelas: num(p, 'Parcelas Restantes'), mes: text(p, 'Mês'),
       })).filter((d) => d.divida && d.saldo != null),
       renda: ren.map((p) => ({
-        mes: title(p, 'Mês'), liquido: num(p, 'Líquido'), eventos: text(p, 'Eventos'),
+        mes: title(p, 'Mês'), liquido: num(p, 'Líquido'), bruto: num(p, 'Bruto'), descontos: num(p, 'Descontos'), eventos: text(p, 'Eventos'),
       })).filter((r) => r.mes).sort((a, b) => a.mes.localeCompare(b.mes)),
       investimentos: inv.map((p) => ({
         ativo: title(p, 'Ativo'), quantidade: num(p, 'Quantidade'),
         precoUnitario: num(p, 'Preço Unitário (R$)'), valorTotal: num(p, 'Valor Total (R$)'),
         tipo: select(p, 'Tipo'), data: date(p, 'Data'), obs: text(p, 'Observações'),
       })).filter((i) => i.ativo),
+      contasFixas: cf.map((p) => ({
+        descricao: title(p, 'Descrição'), tipo: select(p, 'Tipo'), periodicidade: select(p, 'Periodicidade'),
+        vencimento: text(p, 'Vencimento'), valor: num(p, 'Valor'), titular: text(p, 'Titular'),
+        ressarcido: checkbox(p, 'Ressarcido'), ativo: checkbox(p, 'Ativo'), notas: text(p, 'Notas'),
+      })).filter((c) => c.descricao && c.valor != null),
     };
     writeFileSync(OUT, JSON.stringify(data, null, 2));
-    console.log(`fetch-notion: ok — ${data.fechamentos.length} fechamentos, ${data.ativos.length} ativos, ${data.dividas.length} dívidas, ${data.renda.length} renda, ${data.investimentos.length} investimentos.`);
+    console.log(`fetch-notion: ok — ${data.fechamentos.length} fechamentos, ${data.ativos.length} ativos, ${data.dividas.length} dívidas, ${data.renda.length} renda, ${data.investimentos.length} investimentos, ${data.contasFixas.length} contas fixas.`);
   } catch (err) {
     console.error('fetch-notion: erro —', err.message);
     if (existsSync(OUT)) {
