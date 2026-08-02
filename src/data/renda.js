@@ -1,5 +1,7 @@
 // Renda CAIXA — extraída dos contracheques (demonstrativos de pagamento)
 // Apenas valores agregados; sem matrícula, conta ou dados pessoais.
+// Líquido/eventos são complementados pelo Notion (fonte oficial de novos meses).
+import notionData from './notion.json';
 
 export const RENDA_MESES = [
   { mes: '2026-01', label: 'Jan', bruto: 15709.96, descontos: 7291.50,  liquido: 8418.46,  obs: 'APIP convertido (R$ 1.587,66)' },
@@ -9,6 +11,21 @@ export const RENDA_MESES = [
   { mes: '2026-05', label: 'Mai', bruto: 12010.15, descontos: 4406.96,  liquido: 7603.19,  obs: '' },
   { mes: '2026-06', label: 'Jun', bruto: 11954.01, descontos: 4786.50,  liquido: 7167.51,  obs: 'Início do e-consignado em folha (R$ 468,34/mês)' },
 ];
+
+// Meses vindos do Notion que ainda não estão no histórico local
+const LABELS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+for (const n of (notionData.renda || [])) {
+  if (!RENDA_MESES.some((m) => m.mes === n.mes) && n.liquido != null) {
+    RENDA_MESES.push({
+      mes: n.mes,
+      label: LABELS[parseInt(n.mes.split('-')[1], 10) - 1],
+      bruto: null, descontos: null,
+      liquido: n.liquido,
+      obs: n.eventos || '',
+    });
+  }
+}
+RENDA_MESES.sort((a, b) => a.mes.localeCompare(b.mes));
 
 export const LIQUIDO_MEDIO = RENDA_MESES.reduce((s, m) => s + m.liquido, 0) / RENDA_MESES.length;
 

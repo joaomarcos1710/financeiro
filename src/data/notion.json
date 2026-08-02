@@ -1,0 +1,159 @@
+{
+  "fetchedAt": "2026-08-02T12:17:16.660Z",
+  "fechamentos": [
+    {
+      "mes": "2026-05",
+      "receitas": 56341.97,
+      "despesas": 34089.16,
+      "status": "Fechado",
+      "obs": "Receita inflada: empréstimo R$ 30.682,75 + restituição IR R$ 8.588,77 (~70% do total). Receita operacional real ≈ R$ 17.070,45."
+    },
+    {
+      "mes": "2026-06",
+      "receitas": 11204.49,
+      "despesas": 26397.03,
+      "status": "Fechado",
+      "obs": "Resultado −R$ 15.192,54. Mês de pagamento antecipado de fatura alta."
+    },
+    {
+      "mes": "2026-07",
+      "receitas": 22240.52,
+      "despesas": 20934.91,
+      "status": "Fechado",
+      "obs": "Resultado +R$ 1.305,61. Fatura cartão R$ 13.188,27. 6 parcelas terminaram (alívio R$ 1.461/mês em agosto). Loterias R$ 657,96 ⚠️"
+    }
+  ],
+  "ativos": [
+    {
+      "conta": "Mercado Pago",
+      "valor": 6.54,
+      "tipo": "Liquidez",
+      "mes": "2026-07"
+    },
+    {
+      "conta": "Dinheiro em Carteira",
+      "valor": 198.41,
+      "tipo": "Liquidez",
+      "mes": "2026-07"
+    },
+    {
+      "conta": "Pi Network (538,92 PI)",
+      "valor": 220.96,
+      "tipo": "Cripto",
+      "mes": "2026-07"
+    },
+    {
+      "conta": "FGTS",
+      "valor": 18434.82,
+      "tipo": "FGTS",
+      "mes": "2026-07"
+    },
+    {
+      "conta": "Conta Corrente CAIXA",
+      "valor": 472.05,
+      "tipo": "Liquidez",
+      "mes": "2026-07"
+    },
+    {
+      "conta": "Previdência CAIXA (FUNCEF)",
+      "valor": 188086.34,
+      "tipo": "Previdência",
+      "mes": "2026-07"
+    },
+    {
+      "conta": "Nomad (US$ 69,62)",
+      "valor": 356.61,
+      "tipo": "Investimento",
+      "mes": "2026-07"
+    }
+  ],
+  "dividas": [
+    {
+      "divida": "CredPlan Variável",
+      "saldo": 147428.03,
+      "parcelas": 117,
+      "mes": "2026-07"
+    },
+    {
+      "divida": "Financiamento Habitação",
+      "saldo": 158834.85,
+      "parcelas": 357,
+      "mes": "2026-07"
+    },
+    {
+      "divida": "Consignado",
+      "saldo": 25904.8,
+      "parcelas": 142,
+      "mes": "2026-07"
+    },
+    {
+      "divida": "Cartão Visa (fatura)",
+      "saldo": 13188.27,
+      "parcelas": null,
+      "mes": "2026-07"
+    },
+    {
+      "divida": "CredPlan Fixo",
+      "saldo": 33147.88,
+      "parcelas": 46,
+      "mes": "2026-07"
+    }
+  ],
+  "renda": [
+    {
+      "mes": "2026-01",
+      "liquido": 8418.46,
+      "eventos": "APIP convertido (R$ 1.587,66)"
+    },
+    {
+      "mes": "2026-02",
+      "liquido": 12409.02,
+      "eventos": "Adiantamento 13º (R$ 5.866,00)"
+    },
+    {
+      "mes": "2026-03",
+      "liquido": 10322.75,
+      "eventos": "PLR R$ 12.376,30 (líquida ~R$ 3,2 mil)"
+    },
+    {
+      "mes": "2026-04",
+      "liquido": 7531.08,
+      "eventos": ""
+    },
+    {
+      "mes": "2026-05",
+      "liquido": 7603.19,
+      "eventos": ""
+    },
+    {
+      "mes": "2026-06",
+      "liquido": 7167.51,
+      "eventos": "Início e-consignado em folha (R$ 468,34/mês)"
+    },
+    {
+      "mes": "2026-07",
+      "liquido": 9137.51,
+      "eventos": ""
+    }
+  ],
+  "investimentos": [
+    {
+      "ativo": "Pi Network (PIUSD)",
+      "quantidade": 538.92,
+      "precoUnitario": 0.41,
+      "valorTotal": 220.96,
+      "tipo": "Cripto",
+      "data": "2026-07-31",
+      "obs": "Recebido via mineração. ⚠️ Liquidez limitada no Brasil — tratar como especulativo até conseguir converter em R$."
+    },
+    {
+      "ativo": "Dólar (Nomad)",
+      "quantidade": 69.62,
+      "precoUnitario": 5.1217,
+      "valorTotal": 356.61,
+      "tipo": "Dólar/Nomad",
+      "data": "2026-07-31",
+      "obs": "Compra recorrente mensal via parcelas no cartão."
+    }
+  ]
+}
