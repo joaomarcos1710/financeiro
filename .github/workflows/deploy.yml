@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * *'  # 06:00 BRT — sincroniza dados do Notion diariamente
 
 permissions:
   contents: write
@@ -21,6 +23,11 @@ jobs:
 
       - name: Instalar dependências
         run: npm install
+
+      - name: Sincronizar dados do Notion
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        run: node scripts/fetch-notion.js
 
       - name: Build
         run: npm run build

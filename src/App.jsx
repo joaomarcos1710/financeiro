@@ -4,6 +4,8 @@ import './App.css';
 import Dashboard from './pages/Dashboard';
 import ContasFixas from './pages/ContasFixas';
 import Renda from './pages/Renda';
+import Patrimonio from './pages/Patrimonio';
+import Investimentos from './pages/Investimentos';
 
 function App() {
   const [theme, setTheme] = useState(() => {
@@ -28,6 +30,8 @@ function App() {
         <Route path="/" element={<Dashboard theme={theme} onThemeToggle={toggleTheme} />} />
         <Route path="/contas-fixas" element={<ContasFixas theme={theme} onThemeToggle={toggleTheme} />} />
         <Route path="/renda" element={<Renda theme={theme} onThemeToggle={toggleTheme} />} />
+        <Route path="/patrimonio" element={<Patrimonio theme={theme} onThemeToggle={toggleTheme} />} />
+        <Route path="/investimentos" element={<Investimentos theme={theme} onThemeToggle={toggleTheme} />} />
       </Routes>
     </div>
   );
