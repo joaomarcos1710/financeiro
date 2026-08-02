@@ -79,6 +79,8 @@ export default function Header({ month, onMonthChange, monthsList, theme, onThem
           <NavLink to="/" end style={navLinkStyle}>Dashboard</NavLink>
           <NavLink to="/contas-fixas" style={navLinkStyle}>Contas Fixas</NavLink>
           <NavLink to="/renda" style={navLinkStyle}>Renda</NavLink>
+          <NavLink to="/patrimonio" style={navLinkStyle}>Patrimônio</NavLink>
+          <NavLink to="/investimentos" style={navLinkStyle}>Investimentos</NavLink>
         </nav>
 
         <div style={{

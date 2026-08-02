@@ -1,5 +1,6 @@
 // Dados REAIS do seu Obsidian
 import { FATURA } from './data/fatura';
+import notion from './data/notion.json';
 
 export const SALARIO_MENSAL = 7167.51;
 
@@ -180,13 +181,8 @@ const julho2026 = {
 };
 
 function totalsFor(month) {
-  // "fechado" = mês tem fluxo lançado (receitas/despesas). Meses só com
-  // fatura de cartão (sem fechamento) entram como não-fechados.
   const fechado = Array.isArray(month.receitas) && month.receitas.length > 0;
-  if (!month.ativos || !month.dividas) {
-    // Mês sem fechamento patrimonial (Ativos/Dívidas) informado —
-    // entra no dashboard com fluxo (receitas/despesas), mas fica de fora
-    // do gráfico de evolução do Patrimônio Líquido.
+  if (!month.ativos || !month.dividas || month.ativos.length === 0) {
     return { ...month, fechado, patrimonio: null, dividas_total: null };
   }
   const totalAtivos = month.ativos.reduce((sum, a) => sum + a.valor, 0);
@@ -194,15 +190,61 @@ function totalsFor(month) {
   return { ...month, fechado, patrimonio: totalAtivos, dividas_total: totalDividas };
 }
 
-// Cada mês pode ter fluxo (fechamento) e/ou fatura de cartão.
-// Maio e Junho estão fechados (Obsidian). Julho AGORA está fechado também!
-export const MONTHS_DATA = {
-  '2026-05': { ...totalsFor(maio2026), fatura: null },
-  '2026-06': { ...totalsFor(junho2026), fatura: null },
-  '2026-07': { ...totalsFor(julho2026), fatura: FATURA },
+// ── Camada Notion (fonte oficial) ─────────────────────────────────────────
+// O Notion define QUAIS meses existem e seus totais/posição patrimonial.
+// O detalhe por categoria (gráficos) vem do histórico local, quando existir.
+const LEGACY_DETAILS = { '2026-05': maio2026, '2026-06': junho2026, '2026-07': julho2026 };
+const LEGACY_FATURAS = { '2026-07': FATURA };
+
+const notionAtivosByMes = {};
+for (const a of notion.ativos || []) {
+  (notionAtivosByMes[a.mes] = notionAtivosByMes[a.mes] || []).push({ nome: a.conta, valor: a.valor, tipo: a.tipo });
+}
+const notionDividasByMes = {};
+for (const d of notion.dividas || []) {
+  (notionDividasByMes[d.mes] = notionDividasByMes[d.mes] || []).push({ nome: d.divida, saldo: d.saldo, parcelas: d.parcelas ?? undefined });
+}
+
+const monthKeys = [...new Set([
+  ...Object.keys(LEGACY_DETAILS),
+  ...(notion.fechamentos || []).map((f) => f.mes),
+])].sort();
+
+const MESES_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const labelFor = (key) => {
+  const [y, m] = key.split('-');
+  return `${MESES_PT[parseInt(m, 10) - 1]} ${y}`;
 };
 
-// Orçamento mensal (do seu arquivo)
+export const MONTHS_DATA = {};
+for (const key of monthKeys) {
+  const legacy = LEGACY_DETAILS[key] || {};
+  const nf = (notion.fechamentos || []).find((f) => f.mes === key);
+  const ativos = notionAtivosByMes[key] || legacy.ativos || [];
+  const dividas = notionDividasByMes[key] || legacy.dividas || [];
+  const month = {
+    label: legacy.label || labelFor(key),
+    totalReceitas: nf?.receitas ?? legacy.totalReceitas ?? null,
+    totalDespesas: nf?.despesas ?? legacy.totalDespesas ?? null,
+    aviso: legacy.aviso,
+    notionObs: nf?.obs || null,
+    statusNotion: nf?.status || null,
+    receitas: legacy.receitas || [],
+    despesas: legacy.despesas || [],
+    diario: legacy.diario,
+    ativos,
+    dividas,
+  };
+  // fechado: marcado no Notion OU com fluxo detalhado local
+  const base = totalsFor(month);
+  base.fechado = nf?.status === 'Fechado' || base.fechado;
+  MONTHS_DATA[key] = { ...base, fatura: LEGACY_FATURAS[key] || null };
+}
+
+// Última posição patrimonial disponível (mês mais recente com ativos no Notion)
+const mesesComAtivos = Object.keys(notionAtivosByMes).sort();
+const ultimoMesPatrimonial = mesesComAtivos[mesesComAtivos.length - 1] || '2026-07';
+
 export const BUDGETS = {
   'Financiamento e Empréstimos': 6600,
   'Compras': 1500,
@@ -216,14 +258,29 @@ export const BUDGETS = {
   'Mariane': 1100
 };
 
-export const ATIVOS = julho2026.ativos;
+export const ATIVOS = notionAtivosByMes[ultimoMesPatrimonial] || julho2026.ativos;
 export const TOTAL_ATIVOS = ATIVOS.reduce((sum, a) => sum + a.valor, 0);
 
-export const DIVIDAS = julho2026.dividas;
+export const DIVIDAS = notionDividasByMes[ultimoMesPatrimonial] || julho2026.dividas;
 export const TOTAL_DIVIDAS = DIVIDAS.reduce((sum, d) => sum + d.saldo, 0);
 
 export const RESERVA_LIQUIDA = ATIVOS
-  .filter(a => ['Conta Corrente CAIXA', 'Mercado Pago'].includes(a.nome))
+  .filter(a => a.tipo === 'Liquidez' || ['Conta Corrente CAIXA', 'Mercado Pago', 'Dinheiro em Carteira'].includes(a.nome))
   .reduce((sum, a) => sum + a.valor, 0);
 
 export const RESERVA_META = SALARIO_MENSAL * 6;
+
+// ── Exports Notion para as páginas novas ──────────────────────────────────
+export const NOTION_RENDA = notion.renda || [];
+export const NOTION_INVESTIMENTOS = notion.investimentos || [];
+export const NOTION_FECHAMENTOS = notion.fechamentos || [];
+export const PATRIMONIO_POR_MES = monthKeys
+  .map((key) => {
+    const m = MONTHS_DATA[key];
+    return m.patrimonio != null ? { mes: key, label: m.label, ativos: m.patrimonio, dividas: m.dividas_total, pl: m.patrimonio - m.dividas_total } : null;
+  })
+  .filter(Boolean);
+export const ATIVOS_POR_MES = notionAtivosByMes;
+export const DIVIDAS_POR_MES = notionDividasByMes;
+export const ULTIMO_MES_PATRIMONIAL = ultimoMesPatrimonial;
+export const NOTION_FETCHED_AT = notion.fetchedAt;
