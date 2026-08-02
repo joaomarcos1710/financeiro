@@ -1,4 +1,4 @@
-import { CARTAO_FIXO, CONTA_FIXO, TOTAL_CARTAO_FIXO, TOTAL_CONTA_FIXO, TOTAL_CONTAS_FIXAS } from '../data/generated/contasFixas';
+import { CARTAO_FIXO, CONTA_FIXO, ANUAIS, TOTAL_CARTAO_FIXO, TOTAL_CONTA_FIXO, TOTAL_ANUAL, TOTAL_ANUAL_MENSAL, TOTAL_CONTAS_FIXAS } from '../data/contasFixas';
 import { DIVIDAS, TOTAL_DIVIDAS } from '../data';
 import { FATURA, TOTAL_PARCELAS_MES } from '../data/fatura';
 import Header from '../components/Header';
@@ -102,6 +102,36 @@ export default function ContasFixas({ theme, onThemeToggle }) {
             </table>
           </div>
         </div>
+
+        {ANUAIS.length > 0 && (
+          <div className="card" style={{ marginBottom: '28px' }}>
+            <h3 style={sectionTitleStyle}>DESPESAS ANUAIS ({fmt(TOTAL_ANUAL)}/ANO · {fmt(TOTAL_ANUAL_MENSAL)}/MÊS EQUIV.)</h3>
+            <div style={{ overflowX: 'auto' }}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Descrição</th>
+                    <th>Obs.</th>
+                    <th style={{ textAlign: 'right' }}>Valor/Ano</th>
+                    <th style={{ textAlign: 'right' }}>Valor/Mês</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ANUAIS.map((item, i) => (
+                    <tr key={i}>
+                      <td>{item.data}</td>
+                      <td>{item.descricao}</td>
+                      <td className="text-muted" style={{ fontSize: '11px' }}>{item.obs}</td>
+                      <td style={{ textAlign: 'right' }}>{fmt(item.valor)}</td>
+                      <td style={{ textAlign: 'right' }} className="text-muted">{fmt(item.valorMensal)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         <div className="card" style={{ marginBottom: '28px' }}>
           <h3 style={sectionTitleStyle}>
