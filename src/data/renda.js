@@ -1,6 +1,6 @@
 // Renda CAIXA — extraída dos contracheques (demonstrativos de pagamento)
 // Apenas valores agregados; sem matrícula, conta ou dados pessoais.
-// Líquido/eventos são complementados pelo Notion (fonte oficial de novos meses).
+// Notion é a fonte oficial: sobrescreve o histórico local quando um mês tiver dado preenchido lá.
 import notionData from './notion.json';
 
 export const RENDA_MESES = [
@@ -12,16 +12,24 @@ export const RENDA_MESES = [
   { mes: '2026-06', label: 'Jun', bruto: 11954.01, descontos: 4786.50,  liquido: 7167.51,  obs: 'Início do e-consignado em folha (R$ 468,34/mês)' },
 ];
 
-// Meses vindos do Notion que ainda não estão no histórico local
 const LABELS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 for (const n of (notionData.renda || [])) {
-  if (!RENDA_MESES.some((m) => m.mes === n.mes) && n.liquido != null) {
+  const idx = RENDA_MESES.findIndex((m) => m.mes === n.mes);
+  const label = LABELS[parseInt(n.mes.split('-')[1], 10) - 1];
+  if (idx >= 0) {
+    const m = RENDA_MESES[idx];
+    RENDA_MESES[idx] = {
+      ...m,
+      bruto: n.bruto ?? m.bruto,
+      descontos: n.descontos ?? m.descontos,
+      liquido: n.liquido ?? m.liquido,
+      obs: n.eventos || m.obs,
+    };
+  } else if (n.liquido != null) {
     RENDA_MESES.push({
-      mes: n.mes,
-      label: LABELS[parseInt(n.mes.split('-')[1], 10) - 1],
-      bruto: null, descontos: null,
-      liquido: n.liquido,
-      obs: n.eventos || '',
+      mes: n.mes, label,
+      bruto: n.bruto ?? null, descontos: n.descontos ?? null,
+      liquido: n.liquido, obs: n.eventos || '',
     });
   }
 }
@@ -32,7 +40,8 @@ export const LIQUIDO_MEDIO = RENDA_MESES.reduce((s, m) => s + m.liquido, 0) / RE
 // Líquido típico sem eventos = média Abr–Jun
 export const BASELINE_LIQUIDO = (7531.08 + 7603.19 + 7167.51) / 3;
 
-// Composição de um mês "normal" (Junho/2026)
+// Composição de um mês "normal" (Junho/2026) — detalhe estrutural, ver também
+// a página "Composição do Contracheque" no Notion.
 export const COMPOSICAO_JUNHO = {
   proventos: [
     { nome: 'Salário Padrão', valor: 7013.00 },
@@ -56,7 +65,6 @@ export const MARGEM_CONSIGNAVEL = {
   usada: 468.34,    // e-consignado atual
 };
 
-// Eventos de renda previstos no 2º semestre (do arquivo Receitas Mensais)
 export const EVENTOS_FUTUROS = [
   { quando: 'Set/2026', o_que: 'PLR' },
   { quando: 'Out/2026', o_que: 'Saque-aniversário FGTS' },
