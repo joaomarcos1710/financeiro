@@ -54,7 +54,7 @@ async function main() {
   }
   try {
     const [fech, ativ, div, ren, inv] = await Promise.all([
-      queryAll(DBS.fechamentos), queryAll(DBS.ativos), queryAll(DBS.dividas), queryAll(DBS.renda), queryAll(DBS.investimentos)
+      queryAll(DBS.fechamentos), queryAll(DBS.ativos), queryAll(DBS.dividas), queryAll(DBS.renda), queryAll(DBS.investimentos),
     ]);
     const data = {
       fetchedAt: new Date().toISOString(),
